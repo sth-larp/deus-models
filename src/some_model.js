@@ -221,6 +221,7 @@ function getPages(model) {
 function getToolbar(model) {
     return {
         hitPoints: model.hp,
+        maxHitPoints: model.maxHp,
     };
 }
 
@@ -285,7 +286,7 @@ module.exports = () => {
             this.debug(data);
             this.update('age', (oldValue) => oldValue + 1);
         },*/
-        
+
         _view(model, viewModel) {
             return JSON.parse(JSON.stringify(getViewModel(model)));
         }
