@@ -1,0 +1,30 @@
+{
+  "name": "deus-models",
+  "version": "1.0.0",
+  "description": "DeusEx Models Pack & Tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -r ts-node/register test/*.ts",
+    "test-con": "mocha --watch test/*.ts --watch-extensions ts,js -r ts-node/register test/*.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sth-larp/deus-models.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sth-larp/deus-models/issues"
+  },
+  "homepage": "https://github.com/sth-larp/deus-models#readme",
+  "dependencies": {
+    "pouchdb": "^6.2.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.0.1",
+    "@types/mocha": "^2.2.41",
+    "chai": "^4.0.2",
+    "mocha": "^3.4.2",
+    "ts-node": "^3.1.0"
+  }
+}
