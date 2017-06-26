@@ -47,7 +47,7 @@ function getStartPage(model) {
                 },
                 {
                     text: "Hit Points",
-                    value: model.hp,
+                    value: model.hp + " / " + model.maxHp,
                     percent: 100 * model.hp / model.maxHp,
                 },
                 {
