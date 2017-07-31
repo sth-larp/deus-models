@@ -24,7 +24,7 @@ const InsuranceDisplay = {
     Serenity: "Serenity/Kintsugi",
     JJ: "Johnson & Johnson",
     Panam: "Pan American",
-    Supervip: "SuperVIP"
+    SuperVip: "SuperVIP"
 }
 
 module.exports = () => {

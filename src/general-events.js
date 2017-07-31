@@ -220,7 +220,7 @@ function changeInsuranceEvent ( api, data, event ){
 
         api.model.insurance = data.Insurance;
 
-        if(api.model.insurance.toUpperCase() != "none"){
+        if(api.model.insurance.toLowerCase() != "none"){
             api.model.insuranceLevel = data.Level;
             api.model.insuranceDiplayName = `${consts().InsuranceDisplay[api.model.insurance]}, L: ${api.model.insuranceLevel}`;
         }else{

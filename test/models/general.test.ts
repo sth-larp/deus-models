@@ -144,7 +144,7 @@ describe('General events: ', () => {
 
     });
 
-    it.only("Change insurance", async function() {
+    it("Change insurance", async function() {
         let model = getExampleModel();
 
         let events = getEvents(model._id, [ {eventType: 'change-insurance', data: {  Insurance: "JJ", Level: 2 } } ], model.timestamp + 100);

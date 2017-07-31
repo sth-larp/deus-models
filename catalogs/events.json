@@ -146,6 +146,12 @@
             "effects": [
                 "changeInsuranceEvent"
             ]
+        },
+        {
+            "eventType": "recover-hp",
+            "effects": [
+                "recoverHpEvent"
+            ]
         }
     ]
 }
