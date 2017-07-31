@@ -19,7 +19,13 @@ const medicSystems = [
     { name: "nervous", label: "нервная", slots: 2},
 ];
 
-
+const InsuranceDisplay = {
+    Govt: "Правительство США",
+    Serenity: "Serenity/Kintsugi",
+    JJ: "Johnson & Johnson",
+    Panam: "Pan American",
+    Supervip: "SuperVIP"
+}
 
 module.exports = () => {
     return {
@@ -29,7 +35,8 @@ module.exports = () => {
         HP_LEAK_TIMER,
         HP_LEAK_DELAY,
         DEATH_DELAY,
-        DEATH_TIMER
+        DEATH_TIMER,
+        InsuranceDisplay
     };
 };
 
