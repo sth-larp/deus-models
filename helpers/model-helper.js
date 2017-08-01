@@ -369,6 +369,28 @@ function modifyModelDigitProperty(api, varName, op, value){
     return true;
 }
 
+
+const implantClasses = [
+    "cyber-implant",
+    "bio-implant",
+    "illegal-cyber-implant",
+    "illegal-bio-implant",
+    "virtual"
+];
+
+/**
+ * Проверяет класс модификатора и возращается true если это имплант 
+ */
+function isImplant(modifier){
+    if(modifier.class && implantClasses.find(c => c == modifier.class)){
+        return true;
+    }
+
+    return false;
+}
+
+
+ 
 module.exports = () => {
     return {
         loadImplant,
@@ -383,7 +405,8 @@ module.exports = () => {
         isImpantCanBeInstalled,
         addDelayedEvent,
         removeElementByMID,
-        modifyModelProperties
+        modifyModelProperties,
+        isImplant
     };
 };
 
