@@ -298,7 +298,7 @@ let restrictedVars = ["_id", "id", "hp", "maxHp", "login", "mail", "profileType"
  */
 function modifyModelProperties(api, operations){
     if(operations){
-        operations.replace(/\s/i,'').split(',').forEach( op => {
+        operations.replace(/\s/ig,'').split(',').forEach( op => {
             let parts = op.match(/^([\w\d]+)([\+\-\=])(\d+)$|^([\w\d]+)\=\"(.*)\"$/i);
 
             if(parts){
