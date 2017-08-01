@@ -17,7 +17,7 @@ function useAid(api, pill) {
     if (api.model.profileType !== 'human') return;
 
     medicHelpers.restoreDamage(api, 1);
-    if (api.model.genome && _.get(api.model, ['usedPills', pill._id])) {
+    if (api.model.genome && _.get(api.model, ['usedPills', pill.id])) {
         _.set(api.model, ['genome', pill.affectedGenomePos], pill.affectedGenomeVal);
     }
 }
@@ -25,7 +25,10 @@ function useAid(api, pill) {
 function usePill(api, data, event) {
     if (!api.model.isAlive) return;
 
-    let pill = api.aquired('pills', data.id);
+    let code = api.aquired('pills', data.id);
+    if (!code) return;
+
+    let pill = api.getCatalogObject('pills', code.pillId);
     if (!pill) return;
 
     switch (pill.pillType) {
@@ -40,9 +43,9 @@ function usePill(api, data, event) {
         break;
     }
 
-    _.set(api.model, ['usedPills', pill._id], event.timestamp);
-    pill.usedAt = event.timestamp;
-    pill.usedBy = api.model._id;
+    _.set(api.model, ['usedPills', pill.id], event.timestamp);
+    code.usedAt = event.timestamp;
+    code.usedBy = api.model._id;
 }
 
 function aquirePills(api, events) {
