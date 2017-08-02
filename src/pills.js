@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const medicHelpers = require('../helpers/medic-helper.js')();
 const helpers = require('../helpers/model-helper.js')();
+const consts = require('../helpers/constants.js')();
 
 const PILL_TIMEOUT = 2 * 60 * 60 * 1000;
 
@@ -23,6 +24,18 @@ function useAid(api, pill, event) {
     medicHelpers.restoreDamage(api, 1, event.timestamp);
     if (api.model.genome && _.get(api.model, ['usedPills', pill.id])) {
         _.set(api.model, ['genome', pill.affectedGenomePos - 1], pill.affectedGenomeVal);
+    }
+}
+
+function useLastChance(api, pill) {
+    if (api.model.profileType != 'human') return;
+
+    let deathTimer = api.getTimer(consts.DEATH_TIMER);
+    if (deathTimer) {
+        deathTimer.miliseconds += 20 * 60 * 1000;
+        api.info('new death timer: %s', deathTimer.miliseconds);
+    } else {
+        api.error('death timer not found');
     }
 }
 
@@ -71,6 +84,9 @@ function usePill(api, data, event) {
             break;
         case 'aid':
             useAid(api, pill, event);
+            break;
+        case 'lastChance':
+            useLastChance(api, pill);
             break;
         case 'narco':
             useNarco(api, pill, event);
