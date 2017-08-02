@@ -40,7 +40,10 @@ function usePill(api, data, event) {
         return;
     }
 
-    if (code.usedAt) return;
+    if (code.usedAt) {
+        api.error('usePill: allready used %s', data.id);
+        return;
+    }
 
     let pill = api.getCatalogObject('pills', code.pillId);
     if (!pill) {
