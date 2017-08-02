@@ -7,7 +7,12 @@ const PILL_TIMEOUT = 2 * 60 * 60 * 1000;
 
 
 function useCure(api, pill) {
-    // нет болезней - нет лечения
+    if (api.model.profileType != 'human') return;
+
+    api.sendEvent(null, 'delay-illness', {system: pill.curedSystem, delay: pill.duration * 1000});
+    if (api.model.genome && _.get(api.model, ['usedPills', pill.id])) {
+        _.set(api.model, ['genome', pill.affectedGenomePos - 1], pill.affectedGenomeVal);
+    }
 }
 
 function useStamm(api, pill) {
