@@ -38,13 +38,15 @@ function usePill(api, data, event) {
     if (!code) {
         api.error(`usePill: can't aquire code ${data.id}`);
         return;
-    } 
+    }
+
+    if (code.usedAt) return;
 
     let pill = api.getCatalogObject('pills', code.pillId);
     if (!pill) {
         api.error(`usePill: can't load pill ${code.pillId}`);
         return;
-    } 
+    }
 
     api.info(`usePill: started code: ${JSON.stringify(code)}, pill: ${JSON.stringify(pill)}`);
 
