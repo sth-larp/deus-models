@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const medicHelpers = require('../helpers/medic-helper.js')();
+const helpers = require('../helpers/model-helper.js')();
 
 const PILL_TIMEOUT = 2 * 60 * 60 * 1000;
 
@@ -19,7 +20,7 @@ function useStamm(api, pill) {
 function useAid(api, pill, event) {
     if (api.model.profileType != 'human') return;
 
-    medicHelpers.restoreDamage(api, 1, event);
+    medicHelpers.restoreDamage(api, 1, event.timestamp);
     if (api.model.genome && _.get(api.model, ['usedPills', pill.id])) {
         _.set(api.model, ['genome', pill.affectedGenomePos], pill.affectedGenomeVal);
     }
@@ -48,6 +49,11 @@ function usePill(api, data, event) {
     api.info(`usePill: started code: ${JSON.stringify(code)}, pill: ${JSON.stringify(pill)}`);
 
     const previousUsage = _.get(api.model, ['usedPills', pill.id]);
+
+    if(code._id.startsWith("9c5d9d84-dbf2")){
+        let pillText = code._id.substring(code._id.length - 7);
+        helpers.addChangeRecord(api, `Вы применили препарат ${pillText}`, event.timestamp);
+    }
 
     if (!previousUsage || event.timestamp - previousUsage > PILL_TIMEOUT) {
         switch (pill.pillType) {
