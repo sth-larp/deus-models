@@ -16,10 +16,10 @@ function useStamm(api, pill) {
     }
 }
 
-function useAid(api, pill) {
+function useAid(api, pill, event) {
     if (api.model.profileType !== 'human') return;
 
-    medicHelpers.restoreDamage(api, 1);
+    medicHelpers.restoreDamage(api, 1, event);
     if (api.model.genome && _.get(api.model, ['usedPills', pill.id])) {
         _.set(api.model, ['genome', pill.affectedGenomePos], pill.affectedGenomeVal);
     }
@@ -39,21 +39,23 @@ function usePill(api, data, event) {
     let pill = api.getCatalogObject('pills', code.pillId);
     if (!pill) return;
 
+    api.info(`usePill: started code: ${code}, pill: ${JSON.stringify(pill)}`);
+
     const previousUsage = _.get(api.model, ['usedPills', pill.id]);
 
     if (!previousUsage || event.timestamp - previousUsage > PILL_TIMEOUT) {
         switch (pill.pillType) {
         case 'cure':
-            useCure(api, pill);
+            useCure(api, pill, event);
             break;
         case 'stamm':
-            useStamm(api, pill);
+            useStamm(api, pill, event);
             break;
         case 'aid':
-            useAid(api, pill);
+            useAid(api, pill, event);
             break;
         case 'narco':
-            useNarco(api, pill);
+            useNarco(api, pill, event);
             break;
 
         default:
