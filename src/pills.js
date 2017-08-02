@@ -34,10 +34,16 @@ function usePill(api, data, event) {
     if (!api.model.isAlive) return;
 
     let code = api.aquired('pills', data.id);
-    if (!code) return;
+    if (!code) {
+        api.error(`usePill: can't aquire code ${data.id}`);
+        return;
+    } 
 
     let pill = api.getCatalogObject('pills', code.pillId);
-    if (!pill) return;
+    if (!pill) {
+        api.error(`usePill: can't load pill ${code.pillId}`);
+        return;
+    } 
 
     api.info(`usePill: started code: ${code}, pill: ${JSON.stringify(pill)}`);
 
