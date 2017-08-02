@@ -9,7 +9,7 @@ function useCure(api, pill) {
 }
 
 function useStamm(api, pill) {
-    if (api.model.profileType !== 'human') return;
+    if (api.model.profileType != 'human') return;
 
     if (api.model.genome) {
         _.set(api.model, ['genome', pill.affectedGenomePos], pill.affectedGenomeVal);
@@ -17,7 +17,7 @@ function useStamm(api, pill) {
 }
 
 function useAid(api, pill, event) {
-    if (api.model.profileType !== 'human') return;
+    if (api.model.profileType != 'human') return;
 
     medicHelpers.restoreDamage(api, 1, event);
     if (api.model.genome && _.get(api.model, ['usedPills', pill.id])) {
@@ -26,7 +26,7 @@ function useAid(api, pill, event) {
 }
 
 function useNarco(api, pill) {
-    if (api.model.profileType !== 'human') return;
+    if (api.model.profileType != 'human') return;
     api.sendEvent(null, 'take-narco', { id: pill.id, narco: pill });
 }
 
@@ -45,7 +45,7 @@ function usePill(api, data, event) {
         return;
     } 
 
-    api.info(`usePill: started code: ${code}, pill: ${JSON.stringify(pill)}`);
+    api.info(`usePill: started code: ${JSON.stringify(code)}, pill: ${JSON.stringify(pill)}`);
 
     const previousUsage = _.get(api.model, ['usedPills', pill.id]);
 
