@@ -13,7 +13,7 @@ function useStamm(api, pill) {
     if (api.model.profileType != 'human') return;
 
     if (api.model.genome) {
-        _.set(api.model, ['genome', pill.affectedGenomePos], pill.affectedGenomeVal);
+        _.set(api.model, ['genome', pill.affectedGenomePos - 1], pill.affectedGenomeVal);
     }
 }
 
@@ -22,7 +22,7 @@ function useAid(api, pill, event) {
 
     medicHelpers.restoreDamage(api, 1, event.timestamp);
     if (api.model.genome && _.get(api.model, ['usedPills', pill.id])) {
-        _.set(api.model, ['genome', pill.affectedGenomePos], pill.affectedGenomeVal);
+        _.set(api.model, ['genome', pill.affectedGenomePos - 1], pill.affectedGenomeVal);
     }
 }
 
