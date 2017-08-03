@@ -4,6 +4,7 @@
 
 //import * as helpers from '../helpers/model-helper';
 
+let consts = require('../helpers/constants');
 let helpers = require('../helpers/model-helper');
 let medHelpers = require('../helpers/medic-helper');
 let Chance = require('chance');
@@ -19,28 +20,56 @@ let clones = require("clones");
  */
 function addImplantEvent( api, data, event ){
     if(data.id){
-        let _implant = helpers().loadImplant(api, data.id);
+        let implant = helpers().loadImplant(api, data.id);
 
-        if(_implant){
-            let implant = clones(_implant)
+        if(implant){
+            //let implant = clones(_implant);
 
             //Импланты (прошивки) для андроидов
-            if(implant.class == "robot"){
-                if(api.model.profileType == "robot"){
-                    api.info(`Install implant (robot fw): ${implant.displayName}`);
+            if(api.model.profileType == "robot"){
+                if(implant.class == "firmware"){
+                    api.info(`addImplantEvent: Install implant (robot fw): ${implant.displayName}`);
                     implant = api.addModifier(implant);
 
                     //Добавление сообщения об этом в список изменений в модели
-                    helpers().addChangeRecord(api, `Установлена прошивка: ${implant.displayName}`, event.timestamp);
-                }else{
-                    api.info(`Can't install implant fw to human: ${implant.displayName}`);
+                    helpers().addChangeRecord(api, `Установлено системное ПО: ${implant.displayName}`, event.timestamp);
+                
+                    return;
                 }
 
+                api.info(`addImplantEvent: Can't install implant ${implant.displayName} to robot`);
                 return;
             }
 
-            if(helpers().isImpantCanBeInstalled(api, implant)){
-                api.info(`Install implant: ${implant.displayName}`);
+            if(api.model.profileType == "human"){
+                api.info(`addImplantEvent: Install implant: ${implant.displayName}`);
+
+                //Получить все существующие импланты на эту систему
+                let existingImplants = helpers().getImplantsBySystem(api, implant.system );
+                
+                //Информация про систему
+                let systemInfo = consts().medicSystems.find( s => s.name == implant.system);
+
+                let implantForRemove = null;
+
+                //Проверить на дубль - два одинаковых импланта поставить нельзя (старый будет удален)
+                //И проверить количество слотов на одной системе
+                let oldDoubleImplant = existingImplants.find( m => m.id == implant.id);
+
+                if(oldDoubleImplant){
+                    implantForRemove = oldDoubleImplant;
+                    api.info(`addImplantEvent: remove doubleimplant: ${implantForRemove.displayName}`); 
+                }else if(systemInfo.slots == existingImplants.length){
+                //Если слоты кончилить - удалить первый
+                    implantForRemove = existingImplants[0];
+                    api.info(`addImplantEvent: not enough slots, remove: ${implantForRemove.displayName}`); 
+                }
+
+                //Если нашли что-то на удаление - удалить это
+                if(implantForRemove){
+                    api.removeModifier( implantForRemove.mID );
+                    helpers().addChangeRecord(api, `Удален имплант: ${implantForRemove.displayName} при установке нового`, event.timestamp);
+                }
 
                 implant.gID = helpers().uuidv4();
 
@@ -49,11 +78,21 @@ function addImplantEvent( api, data, event ){
 
                 //Установка импланта
                 implant = api.addModifier(implant);
+                api.info(`addImplantEvent: installed implant: ${implant.displayName}!`);
 
                 //Установка системы на которой стоит имплант в "мертвую"
                 if(implant.system != "nervous"){
                     medHelpers().setMedSystem(api, implant.system, 0);
+                    api.info(`addImplantEvent: set system ${implant.system} to 0 (dead)!`);
                 }
+
+                //Если у персонажа были болезни для этой системы их надо найти и удалить
+                let illnesses = api.getModifiersByClass("illness").filter( ill => ill.system == implant.system );
+                illnesses.forEach( ill => {
+                    api.removeModifier(ill.mID);
+                    api.removeTimer(`${ill._id}-${ill.mID}`);
+                    api.info(`addImplantEvent: remove illness ${ill.id}!`);
+                });
                 
                 //Добавление сообщения об этом в список изменений в модели
                 helpers().addChangeRecord(api, `Установлен имплант: ${implant.displayName}`, event.timestamp);
@@ -61,7 +100,7 @@ function addImplantEvent( api, data, event ){
                 //Выполнение мгновенного эффекта установки (изменение кубиков сознания пока)
                 instantInstallEffect(api, implant);
             }else{
-                api.info(`Can't install implant (not enough slots or doubling): ${implant.displayName}`);
+                api.info(`addImplantEvent: Can't install implant (not enough slots or doubling): ${implant.displayName}`);
             }
         }   
     }
