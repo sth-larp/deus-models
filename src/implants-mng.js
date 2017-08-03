@@ -25,6 +25,10 @@ function addImplantEvent( api, data, event ){
         if(implant){
             //let implant = clones(_implant);
 
+            //Убрать предикаты из модели
+            delete implant.predicates;
+            implant.gID = helpers().uuidv4();
+
             //Импланты (прошивки) для андроидов
             if(api.model.profileType == "robot"){
                 if(implant.class == "firmware"){
@@ -37,7 +41,7 @@ function addImplantEvent( api, data, event ){
                     return;
                 }
 
-                api.info(`addImplantEvent: Can't install implant ${implant.displayName} to robot`);
+                api.error(`addImplantEvent: Can't install implant ${implant.displayName} to robot`);
                 return;
             }
 
@@ -70,12 +74,7 @@ function addImplantEvent( api, data, event ){
                     api.removeModifier( implantForRemove.mID );
                     helpers().addChangeRecord(api, `Удален имплант: ${implantForRemove.displayName} при установке нового`, event.timestamp);
                 }
-
-                implant.gID = helpers().uuidv4();
-
-                //Убрать предикаты из модели
-                delete implant.predicates;
-
+             
                 //Установка импланта
                 implant = api.addModifier(implant);
                 api.info(`addImplantEvent: installed implant: ${implant.displayName}!`);
@@ -100,9 +99,11 @@ function addImplantEvent( api, data, event ){
                 //Выполнение мгновенного эффекта установки (изменение кубиков сознания пока)
                 instantInstallEffect(api, implant);
             }else{
-                api.info(`addImplantEvent: Can't install implant (not enough slots or doubling): ${implant.displayName}`);
+                api.error(`addImplantEvent: it's not human or robot - can't install implant : ${implant.displayName}`);
             }
-        }   
+        }else{
+            api.error(`addImplantEvent: implant not found: ${data.id}`);
+        }
     }
 }
 
